@@ -6,7 +6,10 @@
 		<tbody>
 			{% for question in questions %}
 			<tr>
-				<td>{{ question.title }}</td>
+				<td>
+					<!--<a href="/polls/{{ question.pk }}">{{ question.title }}</a>-->
+					<a href="{% url 'question_detail' pk=question.pk %}">{{ question.title }}</a>
+				</td>
 			</tr>
 			{% endfor %}
 		</tbody>

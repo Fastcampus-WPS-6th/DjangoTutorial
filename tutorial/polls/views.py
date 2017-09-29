@@ -46,3 +46,14 @@ def question_detail(request, pk):
         'question': question,
     }
     return render(request, 'polls/question.html', context)
+
+
+def vote(request, choice_pk):
+    """
+    pk가 choice_pk에 해당하는 Choice객체의 votes값을 1증가 후 DB에 저장
+    이후 투표한 Choice가 속한 question_detail로 이동
+
+    :param request:
+    :param choice_pk:
+    :return:
+    """

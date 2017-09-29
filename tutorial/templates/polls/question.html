@@ -2,6 +2,18 @@
 
 {% block content %}
 <div>
-	<h1>{{ question.title }}</h1>
+	<table class="table table-stripped table-bordered">
+		<thead>
+			<tr>
+				<th colspan="2" style="text-align: center;">{{ question.title }}</th>
+			</tr>
+			{% for choice in question.choice_set.all %}
+			<tr>
+				<td>{{ choice.title }}</td>
+				<td>{{ choice.votes }}</td>
+			</tr>
+			{% endfor %}
+		</thead>
+	</table>
 </div>
 {% endblock %}
