@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from django.db import models
+from django.utils import timezone
 
 """
 class Question
@@ -30,6 +33,16 @@ class Question(models.Model):
 
     def __str__(self):
         return f'설문조사 ({self.title})'
+
+    def is_recently(self):
+        """
+        :return:
+        이 Question의 published_date가
+        현재시각 기준으로 7일 이내인지 여부 리턴
+        (published_date가 None일경우엔 무조건 False)
+        """
+        return bool(self.published_date) and \
+            timezone.now() - self.published_date <= timedelta(days=7)
 
 
 class Choice(models.Model):
