@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 
-from .models import Question
+from .models import Question, Choice
 
 
 def index(request):
@@ -53,7 +54,20 @@ def vote(request, choice_pk):
     pk가 choice_pk에 해당하는 Choice객체의 votes값을 1증가 후 DB에 저장
     이후 투표한 Choice가 속한 question_detail로 이동
 
+    1. choice변수에 pk가 choice_pk인 Choice객체를 DB에서 가져와 할당
+    2. choice의 votes속성값을 1증가
+    3. choice의 변경사항을 DB에 저장
+    4. question변수에 돌아갈 Question객체를 choice변수의 question속성을 이용해 할당
+    5. redirect(<view_name>, question_pk=question.pk) 를 사용해서 리디렉션 리턴
+
     :param request:
     :param choice_pk:
     :return:
     """
+    if request.method == 'POST':
+        choice = Choice.objects.get(pk=choice_pk)
+        choice.votes += 1
+        choice.save()
+        question = choice.question
+        return redirect('question_detail', pk=question.pk)
+    return HttpResponse('Permission denied', status=403)
