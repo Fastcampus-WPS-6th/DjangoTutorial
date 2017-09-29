@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.utils.datastructures import MultiValueDictKeyError
 
 from .models import Question, Choice
 
@@ -49,25 +50,38 @@ def question_detail(request, pk):
     return render(request, 'polls/question.html', context)
 
 
-def vote(request, choice_pk):
+def vote(request, pk):
     """
-    pk가 choice_pk에 해당하는 Choice객체의 votes값을 1증가 후 DB에 저장
+    choice_pk에 request.POST로 전달된 choice의 pk값을 할당
+    선택한 Choice를 choice변수에 할당
+    votes값을 1증가 후 DB에 저장
     이후 투표한 Choice가 속한 question_detail로 이동
 
+    0. question변수에 pk가 question_pk인 Question객체를 DB에서 가져와 할당
     1. choice변수에 pk가 choice_pk인 Choice객체를 DB에서 가져와 할당
     2. choice의 votes속성값을 1증가
     3. choice의 변경사항을 DB에 저장
-    4. question변수에 돌아갈 Question객체를 choice변수의 question속성을 이용해 할당
-    5. redirect(<view_name>, question_pk=question.pk) 를 사용해서 리디렉션 리턴
-
-    :param request:
-    :param choice_pk:
-    :return:
+    4. redirect(<view_name>, question_pk=question.pk) 를 사용해서 리디렉션 리턴
     """
     if request.method == 'POST':
-        choice = Choice.objects.get(pk=choice_pk)
-        choice.votes += 1
-        choice.save()
-        question = choice.question
+
+        # 누군가 form의 action에 있는 question_pk값을 변형해서 보냈을 경우 발생 가능
+        try:
+            question = Question.objects.get(pk=pk)
+        except Question.DoesNotExist:
+            return redirect('index')
+
+        try:
+            # 누군가 input의 value에 있는 choice_pk값을 변형해서 보냈을 경우
+            # Choice.DoesNotExist발생 가능
+            choice_pk = request.POST['choice_pk']
+            choice = question.choice_set.get(pk=choice_pk)
+            choice.votes += 1
+            choice.save()
+        except MultiValueDictKeyError:
+            # choice_pk가 전달되지 않았을 경우 (선택하지 않았을 경우)
+            print('KeyError!')
+        except Choice.DoesNotExist:
+            print('Choice.DoesNotExist! (진짜 없거나, question에 해당하는 Choice가 아니거나)')
         return redirect('question_detail', pk=question.pk)
     return HttpResponse('Permission denied', status=403)

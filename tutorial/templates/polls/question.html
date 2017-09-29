@@ -2,18 +2,24 @@
 
 {% block content %}
 <div>
-	<table class="table table-stripped table-bordered">
-		<thead>
-			<tr>
-				<th colspan="2" style="text-align: center;">{{ question.title }}</th>
-			</tr>
-			{% for choice in question.choice_set.all %}
-			<tr>
-				<td>{{ choice.title }}</td>
-				<td>{{ choice.votes }}</td>
-			</tr>
-			{% endfor %}
-		</thead>
-	</table>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			{{ question.title }}
+		</div>
+		<div class="panel-body">
+			<form action="{% url 'vote' pk=question.pk %}" method="POST">
+				{% csrf_token %}
+				{% for choice in question.choice_set.all %}
+				<div class="radio">
+					<label>
+						<input type="radio" name="choice_pk" value="{{ choice.pk }}">
+						{{ choice.title }} ({{ choice.votes }})
+					</label>
+				</div>
+				{% endfor %}
+				<button class="btn btn-primary btn-block">투표하기</button>
+			</form>
+		</div>
+	</div>
 </div>
 {% endblock %}
