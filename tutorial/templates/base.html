@@ -1,0 +1,30 @@
+{% load static %}
+<!doctype html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+	      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<!--정적파일을 참조하는 템플릿 static태그 (STATICFILES_DIRS의 path를 기준으로 상대경로)-->
+	<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+	<link rel="stylesheet" href="{% static 'css/blog.css' %}">
+	<link rel="stylesheet" href="/static/css/blog.css">
+	<title>Django tutorial</title>
+</head>
+<body>
+	<div class="blog-header">
+		<div class="container">
+			<h2 class="blog-title"><a href="">{% block title %}Django tutorial{% endblock %}</a></h2>
+			<div class="header-right">
+			</div>
+		</div>
+	</div>
+	<div class="container main-container">
+		<!--'content'라는 이름으로 block구역 지정-->
+		<!--이 템플릿을 확장한 다른 템플릿에서 이 block을 채우는 형태로 사용-->
+		{% block content %}
+		{% endblock %}
+	</div>
+</body>
+</html>

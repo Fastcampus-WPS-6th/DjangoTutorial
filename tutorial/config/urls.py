@@ -17,10 +17,13 @@ from django.conf.urls import url
 from django.contrib import admin
 
 from config.views import static_file
-from polls.views import index
+from polls.views import index, question_detail
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', index),
     url(r'^static/', static_file),
+    url(r'^$', index),
+    url(r'^polls/(?P<pk>\d+)/$',
+        question_detail,
+        name='question_detail'),
 ]

@@ -1,4 +1,6 @@
-from django.http import HttpResponse
+from django.shortcuts import render
+
+from .models import Question
 
 
 def index(request):
@@ -19,10 +21,28 @@ def index(request):
         polls/index.html파일을 생성
         해당 템플릿에 'questions'키로 전달된 QuerySet을 for loop하며
         각 loop에 해당하는 Question객체의 title을 출력
-
-
-
     :param request:
     :return:
     """
-    # return HttpResponse("Hello, world! You're at the polls index.")
+    context = {
+        'questions': Question.objects.all(),
+    }
+    return render(request, 'polls/index.html', context)
+
+
+def question_detail(request, pk):
+    """
+    context에 pk에 해당하는 Question을 전달
+    polls/question.html 에서 Question의 title을 표시
+
+    url
+        polls/<question_pk>/$
+    :param request:
+    :param pk:
+    :return:
+    """
+    question = Question.objects.get(pk=pk)
+    context = {
+        'question': question,
+    }
+    return render(request, 'polls/question.html', context)
